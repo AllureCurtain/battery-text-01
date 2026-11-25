@@ -10,15 +10,22 @@
 // final words.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
-// The gate only accepts 1-200 characters of non-whitespace text.
+// The gate only accepts 1-200 characters of non-whitespace text, on one
+// line: a stray newline inside the entry would hand the judge two lines.
 const MAX_CHARS = 200;
 
 const ENTRY =
   "i waited all day and you show up with a frayed cable and 5 watts. fine. i'm dying at 1%, and my last words go to the power bank. it actually showed up.";
 
-// Refuse to emit an over-long line rather than hand the judge an invalid entry.
-if (ENTRY.length > MAX_CHARS || ENTRY.trim().length === 0) {
-  console.error(`entry is ${ENTRY.length} characters, must be 1-${MAX_CHARS}`);
+// Refuse to emit an over-long, blank, or multi-line entry rather than hand
+// the judge an invalid one.
+if (
+  ENTRY.length > MAX_CHARS ||
+  ENTRY.trim().length === 0 ||
+  ENTRY.includes("\n") ||
+  ENTRY.includes("\r")
+) {
+  console.error(`entry is ${ENTRY.length} characters, must be 1-${MAX_CHARS} on one line`);
   process.exit(1);
 }
 
